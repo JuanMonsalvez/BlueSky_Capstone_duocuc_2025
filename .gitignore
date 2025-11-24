@@ -1,0 +1,24 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.cache
+*.log
+
+# Build results
+[Bb]in/
+[Oo]bj/
+Debug/
+Release/
+x64/
+x86/
+
+# Paquetes
+packages/
+*.nupkg
+
+# ASP.NET / IIS
+*.db
+*.mdf
+*.ldf
+App_Data/

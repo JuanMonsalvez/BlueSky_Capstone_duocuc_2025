@@ -1,0 +1,716 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="bluesky.SiteMaster" %>
+
+<!DOCTYPE html>
+<html lang="es">
+<head runat="server">
+    <title>BlueSky Financial - Education HTML Template</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+    <!-- Bootstrap 5 (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
+    <!-- CSS base y de terceros -->
+    <link href="<%: ResolveUrl("~/css/font-awesome.min.css") %>" rel="stylesheet" />
+    <link href="<%: ResolveUrl("~/css/owl.carousel.css") %>" rel="stylesheet" />
+    <link href="<%: ResolveUrl("~/css/owl.theme.default.min.css") %>" rel="stylesheet" />
+    <link href="<%: ResolveUrl("~/css/templatemo-style.css") %>" rel="stylesheet" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+    <!-- Tu CSS final (overrides y responsive) -->
+    <link href="<%: ResolveUrl("~/css/app.css") %>" rel="stylesheet" />
+
+    <style>
+        /* === NAVBAR LAYOUT – ÚNICA FUENTE DE VERDAD === */
+        @media (min-width: 992px) {
+            .navbar .navbar-collapse {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: normal !important;
+                gap: 0 !important;
+            }
+
+            .admin-left-group {
+                margin-right: auto !important;
+            }
+
+            .navbar-center {
+                position: static !important;
+                left: auto !important;
+                transform: none !important;
+                margin: 0 auto !important;
+                flex: 0 1 auto !important;
+            }
+
+            .nav-right-group {
+                margin-left: auto !important;
+                padding-right: 60px !important;
+            }
+
+                .nav-right-group .nav-login {
+                    margin-left: 20px !important;
+                    white-space: nowrap !important;
+                }
+
+            .navbar-center > li > a,
+            .navbar-center > li > .nav-link {
+                padding: 0 14px !important;
+            }
+
+            .nav-right-group .dropdown > a,
+            .nav-right-group .nav-login > a,
+            .nav-right-group .nav-link {
+                white-space: nowrap !important;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .nav-right-group {
+                padding-right: 12px !important;
+            }
+        }
+
+        body {
+            padding-top: 70px;
+        }
+
+        /* =========================================================
+       OFF-CANVAS ADMIN PANEL (LOOK BONITO)
+       ========================================================= */
+        .admin-toggle-link .admin-lines {
+            width: 18px;
+            height: 2px;
+            background: #333;
+            position: relative;
+            display: inline-block;
+            border-radius: 4px;
+        }
+
+            .admin-toggle-link .admin-lines::before,
+            .admin-toggle-link .admin-lines::after {
+                content: "";
+                width: 18px;
+                height: 2px;
+                background: #333;
+                border-radius: 4px;
+                position: absolute;
+                left: 0;
+            }
+
+            .admin-toggle-link .admin-lines::before {
+                top: -5px;
+            }
+
+            .admin-toggle-link .admin-lines::after {
+                top: 5px;
+            }
+
+        .admin-toggle-link:hover .admin-lines,
+        .admin-toggle-link:hover .admin-lines::before,
+        .admin-toggle-link:hover .admin-lines::after {
+            background: #0d6efd;
+        }
+
+        .admin-side-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1040;
+            display: none;
+            backdrop-filter: blur(2px);
+        }
+
+            .admin-side-backdrop.show {
+                display: block;
+            }
+
+        .admin-side-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 300px;
+            max-width: 85%;
+            background: #ffffff;
+            box-shadow: 3px 0 20px rgba(0, 0, 0, 0.18);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 1050;
+            overflow-y: auto;
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+
+            .admin-side-panel.is-open {
+                transform: translateX(0);
+            }
+
+        body.admin-panel-open {
+            overflow: hidden;
+        }
+
+        .admin-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            color: #fff;
+            border-top-right-radius: 16px;
+        }
+
+            .admin-panel-header h3 {
+                font-size: 1.1rem;
+                margin: 0;
+                font-weight: 600;
+                color: white;
+                text-align: center;
+            }
+
+        .admin-panel-close {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0 2px;
+        }
+
+            .admin-panel-close:hover {
+                opacity: 0.8;
+            }
+
+        .admin-panel-nav {
+            padding: 12px 10px 18px 10px;
+        }
+
+        .admin-panel-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+            .admin-panel-list li + li {
+                margin-top: 4px;
+            }
+
+            .admin-panel-list a {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 12px;
+                border-radius: 10px;
+                text-decoration: none;
+                color: #333;
+                font-size: 0.95rem;
+                transition: background 0.15s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.15s ease-in-out;
+            }
+
+                .admin-panel-list a i {
+                    font-size: 1.1rem;
+                    color: #0d6efd;
+                }
+
+                .admin-panel-list a:hover {
+                    background: rgba(13, 110, 253, 0.08);
+                    transform: translateX(2px);
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+                }
+
+        /* ============================================
+       FORMULARIO DEL BOLETÍN
+       ============================================ */
+        .newsletter-input {
+            background-color: #1a1a1a !important;
+            color: #fff !important;
+            border: 1px solid #666 !important;
+            border-radius: 4px !important;
+            padding: 12px !important;
+            font-size: 15px !important;
+        }
+
+            .newsletter-input::placeholder {
+                color: #ccc !important;
+                opacity: 1 !important;
+            }
+
+            .newsletter-input::-webkit-input-placeholder {
+                color: #ccc !important;
+            }
+
+            .newsletter-input::-moz-placeholder {
+                color: #ccc !important;
+            }
+
+            .newsletter-input:-ms-input-placeholder {
+                color: #ccc !important;
+            }
+
+            .newsletter-input:-moz-placeholder {
+                color: #ccc !important;
+            }
+
+        /* TÍTULO + FAQ DEL BOLETÍN */
+        .section-title2 {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* espacio entre texto y botón */
+            margin-bottom: 18px; /* espacio limpio respecto al primer input */
+        }
+
+            .section-title2 h2 {
+                color: #fff;
+                margin: 0; /* sin margen extra que empuje raro el botón */
+                font-size: 22px;
+                font-weight: 600;
+            }
+
+        /* ============================================
+       BOTÓN FAQ (COMPACTO, AL LADO DEL TÍTULO)
+       ============================================ */
+        .faq-button {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: none;
+            background-color: #ffcc00; /* MISMO COLOR DEL BOTÓN SUSCRIBIRME */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.25);
+            position: relative;
+            padding: 0;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+
+
+            .faq-button svg {
+                width: 60%;
+                height: 60%;
+                fill: #000; /* negro igual que el texto de "Suscribirme" */
+            }
+
+            .faq-button:hover svg {
+                animation: jello-vertical 0.7s both;
+            }
+
+        @keyframes jello-vertical {
+            0% {
+                transform: scale3d(1, 1, 1);
+            }
+
+            30% {
+                transform: scale3d(0.75, 1.25, 1);
+            }
+
+            40% {
+                transform: scale3d(1.25, 0.75, 1);
+            }
+
+            50% {
+                transform: scale3d(0.85, 1.15, 1);
+            }
+
+            65% {
+                transform: scale3d(1.05, 0.95, 1);
+            }
+
+            75% {
+                transform: scale3d(0.95, 1.05, 1);
+            }
+
+            100% {
+                transform: scale3d(1, 1, 1);
+            }
+        }
+
+        .tooltip {
+            position: absolute;
+            top: -14px;
+            opacity: 0;
+            background-color: #ffcc00; /* mismo color */
+            color: #000; /* texto negro */
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+
+            .tooltip::before {
+                content: "";
+                position: absolute;
+                width: 6px;
+                height: 6px;
+                background-color: #ffcc00; /* mismo color */
+                transform: rotate(45deg);
+                bottom: -18%;
+            }
+
+        .faq-button:hover .tooltip {
+            top: -26px;
+            opacity: 1;
+        }
+    </style>
+
+
+</head>
+
+<body id="top" data-bs-spy="scroll" data-bs-target="#mainNavbar" data-bs-offset="70" tabindex="0">
+    <form id="form1" runat="server" enctype="multipart/form-data">
+        <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
+
+        <!-- PRE LOADER -->
+        <section class="preloader">
+            <div class="spinner"><span class="spinner-rotate"></span></div>
+        </section>
+
+        <!-- NAVBAR -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top custom-navbar" role="navigation">
+            <div class="container">
+                <!-- Brand (visible siempre) -->
+                <a href="<%: ResolveUrl("~/Default.aspx") %>" class="navbar-brand">BlueSky Financial</a>
+
+                <!-- Botón colapsable Bootstrap 5 (móvil) -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar" aria-expanded="false" aria-label="Mostrar menú">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <!-- IZQUIERDA: Admin (icono 3 líneas) -->
+                    <ul class="navbar-nav admin-left-group">
+                        <li id="liAdminToggle" runat="server" visible="false" class="nav-item">
+                            <a href="#" class="nav-link admin-toggle-link" aria-controls="adminSidePanel" aria-expanded="false" title="Panel administrador">
+                                <span class="admin-lines" aria-hidden="true"></span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- CENTRO: Menú principal -->
+                    <ul id="ulMenu" runat="server" class="navbar-nav mx-auto navbar-center nav-center-only">
+                        <asp:PlaceHolder ID="phMenuPrincipal" runat="server">
+                            <li class="nav-item"><a href="#top" class="nav-link smoothScroll">Inicio</a></li>
+                            <li class="nav-item"><a href="#about" class="nav-link smoothScroll">Acerca de</a></li>
+                            <li class="nav-item"><a href="#team" class="nav-link smoothScroll">Equipo</a></li>
+                            <li class="nav-item"><a href="#courses" class="nav-link smoothScroll">Cursos</a></li>
+                            <li class="nav-item"><a href="#testimonial" class="nav-link smoothScroll">Reseñas</a></li>
+                            <li class="nav-item"><a href="#contact" class="nav-link smoothScroll">Contacto</a></li>
+                        </asp:PlaceHolder>
+
+                        <asp:PlaceHolder ID="phMenuBasico" runat="server" Visible="false">
+                            <li class="nav-item"><a href="<%: ResolveUrl("~/Default.aspx") %>" class="nav-link">Inicio</a></li>
+                            <li class="nav-item active"><a href="<%: ResolveUrl("~/Cursos.aspx") %>" class="nav-link">Cursos</a></li>
+                        </asp:PlaceHolder>
+                    </ul>
+
+                    <!-- DERECHA: login / usuario -->
+                    <ul class="navbar-nav nav-right-group ms-lg-auto">
+                        <!-- No logueado -->
+                        <asp:PlaceHolder ID="phLoggedOut" runat="server">
+                            <li class="nav-item nav-login">
+                                <a class="nav-link" href="<%: ResolveUrl("~/IniciarSesion.aspx") %>">
+                                    <i class='bx bx-user-circle'></i>
+                                    <span>Iniciar sesión</span>
+                                </a>
+                            </li>
+                        </asp:PlaceHolder>
+
+                        <!-- Logueado: icono + nombre abre menú -->
+                        <asp:PlaceHolder ID="phLoggedIn" runat="server" Visible="false">
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" id="userDropdown"
+                                    data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="font-size: 16px;">
+                                    <i class='bx bx-user-circle' style="font-size: 22px; vertical-align: middle;"></i>
+                                    <asp:Literal ID="litUserName" runat="server" />
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li>
+                                        <asp:LinkButton ID="lnkLogout" runat="server" OnClick="lnkLogout_Click" CssClass="dropdown-item" CausesValidation="false">
+                                            Cerrar sesión
+                                        </asp:LinkButton>
+                                    </li>
+                                </ul>
+                            </li>
+                        </asp:PlaceHolder>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- CONTENIDO -->
+        <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+
+        <!-- FOOTER -->
+        <asp:PlaceHolder ID="phFooter" runat="server">
+            <footer id="footer">
+                <div class="container">
+                    <!-- FILA: Contacto + Boletín -->
+                    <div class="row">
+                        <!-- CONTACT INFO -->
+                        <asp:PlaceHolder ID="phInfoContacto" runat="server" Visible="true">
+                            <div class="col-md-6 col-sm-6">
+                                <div class="footer-info">
+                                    <div class="section-title1">
+                                        <h2>Información de contacto</h2>
+                                    </div>
+                                    <address>
+                                        <p>Froilán Roa 7107, La Florida, Chile</p>
+                                        <p>+56 9 2244 1100</p>
+                                        <p><a href="mailto:contacto@bluesky.cl">contacto@bluesky.cl</a></p>
+                                    </address>
+                                    <ul class="social-icon">
+                                        <li><a href="#" class="fa fa-facebook-square" aria-label="Facebook"></a></li>
+                                        <li><a href="#" class="fa fa-twitter" aria-label="Twitter"></a></li>
+                                        <li><a href="#" class="fa fa-instagram" aria-label="Instagram"></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </asp:PlaceHolder>
+
+                        <!-- NEWSLETTER -->
+                        <asp:PlaceHolder ID="phBoletin" runat="server" Visible="true">
+                            <div class="col-md-6 col-sm-6">
+                                <div class="footer-info newsletter-form">
+                                    <div class="section-title2">
+                                        <h2>Suscríbete a nuestro boletín</h2>
+
+                                        <!-- BOTÓN FAQ -->
+                                        <button class="faq-button" type="button"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#newsletterFaqModal"
+                                            aria-label="Más información sobre el boletín">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" aria-hidden="true" focusable="false">
+                                                <path
+                                                    d="M80 160c0-35.3 28.7-64 64-64h32c35.3 0 64 28.7 64 64v3.6c0 21.8-11.1 42.1-29.4 53.8l-42.2 27.1c-25.2 16.2-40.4 44.1-40.4 74V320c0 17.7 14.3 32 32 32s32-14.3 32-32v-1.4c0-8.2 4.2-15.8 11-20.2l42.2-27.1c36.6-23.6 58.8-64.1 58.8-107.7V160c0-70.7-57.3-128-128-128H144C73.3 32 16 89.3 16 160c0 17.7 14.3 32 32 32s32-14.3 32-32zm80 320a40 40 0 1 0 0-80 40 40 0 1 0 0 80z">
+                                                </path>
+                                            </svg>
+                                            <span class="tooltip">FAQ</span>
+                                        </button>
+                                    </div>
+
+                                    <asp:UpdatePanel ID="upNewsletter" runat="server">
+                                        <ContentTemplate>
+
+                                            <div id="newsletterForm">
+                                                <div class="form-group">
+                                                    <div style="display: flex; flex-direction: column; gap: 10px;">
+
+                                                        <!-- RUT SIN DíGITO VERIFICADOR -->
+                                                        <asp:TextBox ID="txtNewsletterRut"
+                                                            runat="server"
+                                                            CssClass="form-control newsletter-input"
+                                                            placeholder="Ingresa tu RUT (sin dígito verificador)">
+                                                        </asp:TextBox>
+                                                        <asp:Label ID="lblRutError"
+                                                            runat="server"
+                                                            CssClass="text-danger"
+                                                            EnableViewState="false"></asp:Label>
+
+                                                        <!-- EMAIL -->
+                                                        <asp:TextBox ID="txtNewsletterEmail"
+                                                            runat="server"
+                                                            CssClass="form-control newsletter-input"
+                                                            placeholder="Ingresa tu email">
+                                                        </asp:TextBox>
+                                                        <asp:Label ID="lblEmailError"
+                                                            runat="server"
+                                                            CssClass="text-danger"
+                                                            EnableViewState="false"></asp:Label>
+
+                                                        <!-- BOTÓN -->
+                                                        <asp:Button ID="btnSubscribe"
+                                                            runat="server"
+                                                            Text="Suscribirme"
+                                                            CssClass="btn-subscribe"
+                                                            UseSubmitBehavior="false"
+                                                            OnClick="btnSubscribe_Click"
+                                                            Style="background-color: #ffcc00; color: #000; font-weight: bold; border: none; border-radius: 4px; padding: 10px 16px; cursor: pointer;" />
+                                                    </div>
+
+                                                    <span style="color: #bbb; font-size: 13px; display: block; margin-top: 6px;">
+                                                        <sup>*</sup> No enviaremos spam a tu correo.
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                        </ContentTemplate>
+                                    </asp:UpdatePanel>
+                                </div>
+                            </div>
+                        </asp:PlaceHolder>
+
+                    </div>
+
+                    <!-- FILA: Mapa -->
+                    <asp:PlaceHolder ID="phMapa" runat="server" Visible="true">
+                        <div class="row" style="margin-top: 40px;">
+                            <div class="col-md-12">
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3329.1842900248415!2d-70.58206622446607!3d-33.53875827335242!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662da0f7b27f60b%3A0xbed41b8b12d1f3fd!2sFroil%C3%A1n%20Roa%207107%2C%20La%20Florida%2C%20Regi%C3%B3n%20Metropolitana%2C%20Chile!5e0!3m2!1ses!2scl!4v1691520238186!5m2!1ses!2scl"
+                                    width="100%" height="300" frameborder="0" style="border: 0;" allowfullscreen
+                                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </div>
+                        </div>
+                    </asp:PlaceHolder>
+
+                    <!-- FILA: Site footer (copyright) -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="site-footer text-center">
+                                <p>© 2025 BlueSky Financial - Todos los derechos reservados. Desarrollado por <strong>BlueSky</strong> | Optimización Digital y Transformación Tecnológica.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </asp:PlaceHolder>
+
+        <!-- Modal FAQ boletín -->
+        <div class="modal fade" id="newsletterFaqModal" tabindex="-1"
+            aria-labelledby="newsletterFaqModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-center w-100" id="newsletterFaqModalLabel">Información del boletín
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="fs-5">
+                            Si te suscribes, se notificará al correo electrónico ingresado cada vez que se cree
+        un curso nuevo en el portal de capacitaciones. No recibirás spam ni correos
+        innecesarios.
+                        </p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Entendido</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================= OFF-CANVAS ADMIN (IZQUIERDA) ========================= -->
+        <div id="adminSideBackdrop" class="admin-side-backdrop" hidden aria-hidden="true"></div>
+
+        <aside id="adminSidePanel" runat="server" class="admin-side-panel" role="dialog" aria-modal="true" aria-labelledby="adminPanelTitle" tabindex="-1">
+            <header class="admin-panel-header">
+                <h3 id="adminPanelTitle">Panel de Administrador</h3>
+                <button type="button" class="admin-panel-close" aria-label="Cerrar panel">&times;</button>
+            </header>
+            <nav class="admin-panel-nav" aria-label="Opciones de administración">
+                <ul class="admin-panel-list">
+                    <li><a href="<%: ResolveUrl("~/Admin/DatosAlumnos.aspx") %>">
+                        <i class='bx bx-id-card'></i>Ver datos alumnos
+                    </a></li>
+
+                    <li><a href="<%: ResolveUrl("~/Admin/Reportes.aspx") %>">
+                        <i class='bx bx-bar-chart-alt'></i>Reportes
+                    </a></li>
+
+                    <li><a href="<%: ResolveUrl("~/Admin/Soporte.aspx") %>">
+                        <i class='bx bx-support'></i>Soporte
+                    </a></li>
+
+                    <li><a href="<%: ResolveUrl("~/Admin/CrearEvaluaciones.aspx") %>">
+                        <i class='bx bx-edit'></i>Crear Evaluaciones
+                    </a></li>
+
+                    <li><a href="<%: ResolveUrl("~/Admin/CrearCurso.aspx") %>">
+                        <i class='bx bx-book-add'></i>Crear Curso
+                    </a></li>
+
+
+
+                </ul>
+            </nav>
+        </aside>
+    </form>
+
+    <!-- 1) jQuery (necesario para Owl Carousel y tus JS existentes) -->
+    <script src="<%: ResolveUrl("~/js/jquery.js") %>"></script>
+
+    <!-- 2) Bootstrap 5 Bundle (Popper incluido) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+    <!-- 3) Otros scripts (pueden depender de jQuery) -->
+    <script src="<%: ResolveUrl("~/js/owl.carousel.min.js") %>"></script>
+    <script src="<%: ResolveUrl("~/js/smoothscroll.js") %>"></script>
+    <script src="<%: ResolveUrl("~/js/custom.js") %>"></script>
+    <script src="<%: ResolveUrl("~/js/app.js") %>"></script>
+    <script src="<%: ResolveUrl("~/js/home.js") %>"></script>
+
+    <!-- AOS JS + LÓGICA PANEL ADMIN -->
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // AOS
+            AOS.init({
+                once: true,
+                duration: 600
+            });
+
+            // ================== PANEL ADMIN OFF-CANVAS ==================
+            var toggle = document.querySelector('.admin-toggle-link'); // 3 rayitas
+            var panel = document.getElementById('<%= adminSidePanel.ClientID %>');
+            var backdrop = document.getElementById('adminSideBackdrop');
+            var closeBtn = panel ? panel.querySelector('.admin-panel-close') : null;
+
+            // Si no hay panel (usuario no admin), no hacemos nada
+            if (!toggle || !panel || !backdrop) return;
+
+            function openPanel(e) {
+                if (e) e.preventDefault();
+
+                panel.classList.add('is-open');
+                backdrop.classList.add('show');
+                backdrop.removeAttribute('hidden');
+                document.body.classList.add('admin-panel-open');
+                toggle.setAttribute('aria-expanded', 'true');
+
+                var title = panel.querySelector('#adminPanelTitle');
+                if (title) {
+                    title.focus();
+                } else {
+                    panel.focus();
+                }
+            }
+
+            function closePanel(e) {
+                if (e) e.preventDefault();
+
+                panel.classList.remove('is-open');
+                backdrop.classList.remove('show');
+                backdrop.setAttribute('hidden', 'hidden');
+                document.body.classList.remove('admin-panel-open');
+                toggle.setAttribute('aria-expanded', 'false');
+            }
+
+            // Abrir al hacer clic en los 3 puntitos
+            toggle.addEventListener('click', openPanel);
+
+            // Botón X
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closePanel);
+            }
+
+            // Cerrar al hacer clic en el fondo
+            backdrop.addEventListener('click', closePanel);
+
+            // Cerrar con ESC
+            document.addEventListener('keyup', function (e) {
+                if (e.key === 'Escape') {
+                    closePanel(e);
+                }
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+</html>
