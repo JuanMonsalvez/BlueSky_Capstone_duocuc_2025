@@ -1,6 +1,8 @@
-﻿<%@ Page Title="SOPORTE - SOLICITUDES" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Soporte.aspx.cs" Inherits="bluesky.Admin.Soporte" %>
+﻿<%@ Page Title="SOPORTE - SOLICITUDES" Language="C#" MasterPageFile="~/Site.Master"
+    CodeBehind="Soporte.aspx.cs" Inherits="bluesky.Admin.Soporte" %>
 
-<%@ MasterType VirtualPath="~/Site.Master" %>
+<%-- <@ MasterType VirtualPath="~/Site.Master" %>  --%>
+
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 

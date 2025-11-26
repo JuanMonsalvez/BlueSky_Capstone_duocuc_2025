@@ -76,19 +76,5 @@ namespace bluesky.Admin
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblResumen;
-
-        /// <summary>
-        /// Propiedad Master.
-        /// </summary>
-        /// <remarks>
-        /// Propiedad generada automáticamente.
-        /// </remarks>
-        public new bluesky.SiteMaster Master
-        {
-            get
-            {
-                return ((bluesky.SiteMaster)(base.Master));
-            }
-        }
     }
 }

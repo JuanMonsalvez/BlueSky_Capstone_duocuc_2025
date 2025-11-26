@@ -40,13 +40,15 @@ namespace bluesky.Admin
                 return;
             }
 
-            // 🎨 3) Configurar comportamiento visual de la MasterPage
-            var master = this.Master as bluesky.SiteMaster;
-            if (master != null)
+            // 🎨 3) Configurar comportamiento visual de la MasterPage (solo si es SiteMaster de escritorio)
+            var masterDesktop = this.Master as bluesky.SiteMaster;
+            if (masterDesktop != null)
             {
-                master.UsarMenuBasico = true;
-                master.OcultarMenus = true;
+                masterDesktop.UsarMenuBasico = true;
+                masterDesktop.OcultarMenus = true;
             }
+            // ⚠️ Si la Master es Site_Mobile, este bloque no se ejecuta
+            //     y evitamos el InvalidCastException en móviles.
 
             // 📌 4) Cargar datos al iniciar
             if (!IsPostBack)
@@ -121,7 +123,6 @@ ORDER BY cs.contacto_id DESC;";
 
             return listaSoporte.Count > 0;
         }
-
 
         private void ActualizarResumen()
         {
@@ -318,16 +319,16 @@ ORDER BY cs.contacto_id DESC;";
             // Encabezados
             sb.AppendLine(string.Join(";", new string[]
             {
-    "ID",
-    "RUT",
-    "NOMBRE",
-    "AP. PATERNO",
-    "AP. MATERNO",
-    "EMAIL",
-    "TELÉFONO",
-    "PROBLEMA",
-    "FECHA",
-    "ESTADO"
+                "ID",
+                "RUT",
+                "NOMBRE",
+                "AP. PATERNO",
+                "AP. MATERNO",
+                "EMAIL",
+                "TELÉFONO",
+                "PROBLEMA",
+                "FECHA",
+                "ESTADO"
             }));
 
             // Filas
@@ -341,16 +342,16 @@ ORDER BY cs.contacto_id DESC;";
 
                 string[] campos = new string[]
                 {
-    EscaparCsv(item.contacto_id.ToString()),
-    EscaparCsv(item.rut),
-    EscaparCsv(item.nombre),
-    EscaparCsv(item.apellido_paterno),
-    EscaparCsv(item.apellido_materno),
-    EscaparCsv(item.email),
-    EscaparCsv(item.persfono),
-    EscaparCsv(item.problema),
-    EscaparCsv(fechaStr),
-    EscaparCsv(estadoStr)
+                    EscaparCsv(item.contacto_id.ToString()),
+                    EscaparCsv(item.rut),
+                    EscaparCsv(item.nombre),
+                    EscaparCsv(item.apellido_paterno),
+                    EscaparCsv(item.apellido_materno),
+                    EscaparCsv(item.email),
+                    EscaparCsv(item.persfono),
+                    EscaparCsv(item.problema),
+                    EscaparCsv(fechaStr),
+                    EscaparCsv(estadoStr)
                 };
 
                 sb.AppendLine(string.Join(";", campos));

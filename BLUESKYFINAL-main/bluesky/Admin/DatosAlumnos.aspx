@@ -1,7 +1,5 @@
 ﻿<%@ Page Title="DATOS ALUMNOS" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="DatosAlumnos.aspx.cs" Inherits="bluesky.Admin.DatosAlumnos" %>
 
-<%@ MasterType VirtualPath="~/Site.Master" %>
-
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
     <style>
