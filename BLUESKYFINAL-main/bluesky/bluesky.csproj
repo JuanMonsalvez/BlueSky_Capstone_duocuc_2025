@@ -239,6 +239,9 @@
     <Content Include="Admin\CrearEvaluaciones.aspx" />
     <Content Include="Admin\DatosAlumnos.aspx" />
     <Content Include="Admin\EditarAlumnos.aspx" />
+    <Content Include="Admin\GenerarPreguntasIA.aspx" />
+    <Content Include="Admin\GestionEvaluacionEditar.aspx" />
+    <Content Include="Admin\GestionEvaluaciones.aspx" />
     <Content Include="Admin\ModificaCorreo.aspx" />
     <Content Include="Admin\Reportes.aspx" />
     <Content Include="Admin\Soporte.aspx" />
@@ -553,6 +556,27 @@
     <Compile Include="Admin\EditarAlumnos.aspx.designer.cs">
       <DependentUpon>EditarAlumnos.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Admin\GenerarPreguntasIA.aspx.cs">
+      <DependentUpon>GenerarPreguntasIA.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\GenerarPreguntasIA.aspx.designer.cs">
+      <DependentUpon>GenerarPreguntasIA.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\GestionEvaluacionEditar.aspx.cs">
+      <DependentUpon>GestionEvaluacionEditar.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\GestionEvaluacionEditar.aspx.designer.cs">
+      <DependentUpon>GestionEvaluacionEditar.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\GestionEvaluaciones.aspx.cs">
+      <DependentUpon>GestionEvaluaciones.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\GestionEvaluaciones.aspx.designer.cs">
+      <DependentUpon>GestionEvaluaciones.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Admin\ModificaCorreo.aspx.cs">
       <DependentUpon>ModificaCorreo.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -714,6 +738,12 @@
       <DependentUpon>certificado.aspx</DependentUpon>
     </Compile>
     <Compile Include="Services\EmailService.cs" />
+    <Compile Include="Services\IA\GeminiClient.cs" />
+    <Compile Include="Services\IA\IAEvalDtos.cs" />
+    <Compile Include="Services\IA\IaParams.cs" />
+    <Compile Include="Services\IA\Parsers.cs" />
+    <Compile Include="Services\IA\TextExtractors.cs" />
+    <Compile Include="Services\IA\Validadores.cs" />
     <Compile Include="Site.Mobile.Master.cs">
       <DependentUpon>Site.Mobile.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
