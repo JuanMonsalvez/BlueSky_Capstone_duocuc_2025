@@ -617,10 +617,6 @@
                         <i class='bx bx-support'></i>Soporte
                     </a></li>
 
-                    <li><a href="<%: ResolveUrl("~/Admin/CrearEvaluaciones.aspx") %>">
-                        <i class='bx bx-edit'></i>Crear Evaluaciones
-                    </a></li>
-
                     <li><a href="<%: ResolveUrl("~/Admin/CrearCurso.aspx") %>">
                         <i class='bx bx-book-add'></i>Crear Curso
                     </a></li>

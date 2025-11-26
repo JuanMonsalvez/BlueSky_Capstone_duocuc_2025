@@ -1,10 +1,6 @@
-using System;
-using System.Configuration;
-using System.Net.Mail;
+Ôªøusing System;
 using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using MySql.Data.MySqlClient;
 
 namespace bluesky
 {
@@ -12,190 +8,45 @@ namespace bluesky
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Si m·s adelante quieres copiar la lÛgica de login/admin del SiteMaster,
-            // la podemos agregar ac·. Por ahora no es obligatorio para que compile.
+            // Siempre evaluamos sesi√≥n para pintar el men√∫ correctamente
+            ConfigurarNavbarPorSesion();
         }
 
-        // ========== LOGOUT (ya lo estabas usando en el markup) ==========
+        private void ConfigurarNavbarPorSesion()
+        {
+            // ======================
+            // 1) Usuario logueado
+            // ======================
+            var username = Session["Username"] as string;
+            bool logged = !string.IsNullOrEmpty(username);
+
+            phLoggedIn.Visible = logged; // Muestra men√∫ usuario
+            phLoggedOut.Visible = !logged; // Muestra "Iniciar sesi√≥n" si no est√° logueado
+
+            litUserName.Text = logged ? HttpUtility.HtmlEncode(username) : string.Empty;
+
+
+            // =======================================================
+            // 2) Administrador (rol_id = 1) ‚Üí muestra dropdown ADMIN
+            // =======================================================
+            int rolValue = 0;
+            bool esAdmin = Session["Rol"] != null
+                           && int.TryParse(Session["Rol"].ToString(), out rolValue)
+                           && rolValue == 1;
+
+            // Mostrar bloque `<asp:PlaceHolder ID="phAdminMenu">`
+            phAdminMenu.Visible = esAdmin;
+        }
+
+
+        // =======================================================
+        // üî• LOGOUT completamente funcional para mobile
+        // =======================================================
         protected void lnkLogout_Click(object sender, EventArgs e)
         {
             Session.Clear();
             Session.Abandon();
             Response.Redirect("~/Default.aspx");
-        }
-
-        // ========== HELPER PARA BUSCAR CONTROLES PROFUNDOS ==========
-        private Control FindControlRecursive(Control root, string id)
-        {
-            if (root == null) return null;
-            if (root.ID == id) return root;
-
-            foreach (Control child in root.Controls)
-            {
-                var found = FindControlRecursive(child, id);
-                if (found != null)
-                    return found;
-            }
-
-            return null;
-        }
-
-        // ========== SUSCRIPCI”N NEWSLETTER (btnSubscribe_Click) ==========
-        protected void btnSubscribe_Click(object sender, EventArgs e)
-        {
-            // Buscamos los controles por ID dentro del ·rbol de la master
-            var txtRutCtrl = FindControlRecursive(this, "txtNewsletterRut") as TextBox;
-            var txtEmailCtrl = FindControlRecursive(this, "txtNewsletterEmail") as TextBox;
-
-            string rut = txtRutCtrl != null ? txtRutCtrl.Text.Trim() : string.Empty;
-            string email = txtEmailCtrl != null ? txtEmailCtrl.Text.Trim() : string.Empty;
-
-            // ==== VALIDACI”N RUT VACÕO ====
-            if (string.IsNullOrWhiteSpace(rut))
-            {
-                ScriptManager.RegisterStartupScript(
-                    this,
-                    this.GetType(),
-                    "rutVacio",
-                    "Swal.fire({ icon:'warning', title:'Falta tu RUT', text:'Por favor ingresa tu RUT (sin dÌgito verificador).' });",
-                    true
-                );
-                return;
-            }
-
-            // ==== VALIDACI”N RUT SOLO N⁄MEROS ====
-            bool rutSoloNumeros = true;
-            foreach (char c in rut)
-            {
-                if (!char.IsDigit(c))
-                {
-                    rutSoloNumeros = false;
-                    break;
-                }
-            }
-
-            if (!rutSoloNumeros)
-            {
-                ScriptManager.RegisterStartupScript(
-                    this,
-                    this.GetType(),
-                    "rutNoNumerico",
-                    "Swal.fire({ icon:'warning', title:'RUT inv·lido', text:'El RUT debe contener solo n˙meros, sin dÌgito verificador.' });",
-                    true
-                );
-                return;
-            }
-
-            // ==== VALIDACI”N LARGO RUT (>5 dÌgitos, sin DV) ====
-            if (rut.Length <= 5)
-            {
-                ScriptManager.RegisterStartupScript(
-                    this,
-                    this.GetType(),
-                    "rutCorto",
-                    "Swal.fire({ icon:'warning', title:'RUT demasiado corto', text:'El RUT debe tener m·s de 5 dÌgitos (sin dÌgito verificador).' });",
-                    true
-                );
-                return;
-            }
-
-            // ==== VALIDACI”N EMAIL VACÕO ====
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                ScriptManager.RegisterStartupScript(
-                    this,
-                    this.GetType(),
-                    "emailVacio",
-                    "Swal.fire({ icon:'warning', title:'Falta tu correo', text:'Por favor ingresa tu correo electrÛnico.' });",
-                    true
-                );
-                return;
-            }
-
-            // ==== VALIDACI”N FORMATO EMAIL ====
-            try
-            {
-                var addr = new MailAddress(email);
-                if (addr.Address != email)
-                {
-                    ScriptManager.RegisterStartupScript(
-                        this,
-                        this.GetType(),
-                        "emailInvalido",
-                        "Swal.fire({ icon:'warning', title:'Correo inv·lido', text:'El formato del correo electrÛnico no es v·lido.' });",
-                        true
-                    );
-                    return;
-                }
-            }
-            catch
-            {
-                ScriptManager.RegisterStartupScript(
-                    this,
-                    this.GetType(),
-                    "emailInvalidoCatch",
-                    "Swal.fire({ icon:'warning', title:'Correo inv·lido', text:'El formato del correo electrÛnico no es v·lido.' });",
-                    true
-                );
-                return;
-            }
-
-            // ==== INSERTAR / ACTUALIZAR EN BD (MISMA QUERY QUE EN SiteMaster) ====
-            string cs = ConfigurationManager.ConnectionStrings["MySqlConn"].ConnectionString;
-
-            using (var conn = new MySqlConnection(cs))
-            using (var cmd = conn.CreateCommand())
-            {
-                cmd.CommandText = @"
-            INSERT INTO boletin_suscripcion (rut, email)
-            VALUES (@Rut, @Email)
-            ON DUPLICATE KEY UPDATE
-                email = VALUES(email),
-                activo = 1,
-                fecha_suscripcion = CURRENT_TIMESTAMP;
-        ";
-
-                cmd.Parameters.AddWithValue("@Rut", rut);
-                cmd.Parameters.AddWithValue("@Email", email);
-
-                try
-                {
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-
-                    // Limpiar los campos si todo saliÛ bien
-                    if (txtRutCtrl != null) txtRutCtrl.Text = string.Empty;
-                    if (txtEmailCtrl != null) txtEmailCtrl.Text = string.Empty;
-
-                    // SweetAlert de Èxito
-                    ScriptManager.RegisterStartupScript(
-                        this,
-                        this.GetType(),
-                        "BoletinOk",
-                        "Swal.fire({ " +
-                            "icon:'success', " +
-                            "title:'°SuscripciÛn exitosa!', " +
-                            "text:'Te has suscrito correctamente al boletÌn.' " +
-                        "});",
-                        true
-                    );
-                }
-                catch (MySqlException)
-                {
-                    // SweetAlert de error
-                    ScriptManager.RegisterStartupScript(
-                        this,
-                        this.GetType(),
-                        "BoletinError",
-                        "Swal.fire({ " +
-                            "icon:'error', " +
-                            "title:'Error', " +
-                            "text:'OcurriÛ un problema al suscribirte. Intenta nuevamente.' " +
-                        "});",
-                        true
-                    );
-                }
-            }
         }
     }
 }

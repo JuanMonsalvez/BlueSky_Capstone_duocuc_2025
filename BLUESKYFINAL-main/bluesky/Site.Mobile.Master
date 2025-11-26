@@ -15,135 +15,182 @@
     <link href="<%: ResolveUrl("~/css/templatemo-style.css") %>" rel="stylesheet" />
     <link href="<%: ResolveUrl("~/css/app.css") %>" rel="stylesheet" />
 
-<style>
+    <style>
+        /* ================================
+           NAVBAR MÓVIL – COLAPSE REAL
+           ================================ */
+        @media (max-width: 991.98px){
+            /* Colapsado por defecto */
+            #mainNavbar.collapse:not(.show){
+                display:none !important;
+            }
 
-    /* =========================================
-       📌 NAVBAR MÓVIL FUNCIONANDO CORRECTAMENTE
-       ========================================= */
-    @media (max-width: 991.98px){
+            /* Cuando Bootstrap agrega .show → abrir */
+            #mainNavbar.collapse.show{
+                display:block !important;
+                background:#fff;
+                width:100%;
+                padding:10px 0;
+                border-radius:6px;
+            }
 
-        /* El menù NO debe mostrarse si no está expandido */
-        #mainNavbar.collapse:not(.show){
-            display:none !important;
+            #mainNavbar .navbar-nav{
+                width:100%;
+            }
+            #mainNavbar .nav-item{
+                border-bottom:1px solid rgba(0,0,0,.06);
+            }
+            #mainNavbar .nav-link{
+                padding:10px 16px;
+                display:block;
+            }
         }
 
-        /* Expandido correctamente en móvil */
-        #mainNavbar.collapse.show{
-            display:block !important;
-            background:#fff;
-            width:100%;
-            padding:10px 0;
-            border-radius:6px;
+        /* ================================
+           AJUSTE DE ANCHO PARA MÓVIL
+           ================================ */
+        @media(max-width:575.98px){
+            html,body{
+                width:100% !important;
+                max-width:100% !important;
+                overflow-x:hidden !important;
+            }
+            .container,.container-fluid{
+                max-width:100% !important;
+                padding-left:14px !important;
+                padding-right:14px !important;
+            }
         }
 
-        /* Menú ocupa todo el ancho */
-        #mainNavbar .navbar-nav{
-            width:100%;
+        body{
+            padding-top:70px!important;
         }
-        #mainNavbar .nav-item{
-            border-bottom:1px solid rgba(0,0,0,.06);
-        }
-        #mainNavbar .nav-link{
-            padding:10px 16px;
-            display:block;
-        }
-    }
-
-    /* ==================================================
-       📱 AJUSTE DE PANTALLA RESPONSIVE REAL PARA MÓVIL
-       ================================================== */
-    @media(max-width:575.98px){
-        html,body{
-            width:100% !important;
-            max-width:100% !important;
-            overflow-x:hidden !important;
-        }
-        .container,.container-fluid{
-            max-width:100% !important;
-            padding-left:14px !important;
-            padding-right:14px !important;
-        }
-    }
-
-    /* Distancia desde navbar fija */
-    body{ padding-top:70px!important; }
-
-</style>
+    </style>
 </head>
-
 
 <body>
 
-<form id="form1" runat="server">
+    <form id="form1" runat="server">
+        <asp:ScriptManager ID="ScriptManagerMobile" runat="server" />
 
-    <asp:ScriptManager ID="ScriptManagerMobile" runat="server" />
+        <!-- ==========================================
+             NAVBAR – misma estructura para todos
+             ========================================== -->
+        <nav class="navbar navbar-light bg-light fixed-top navbar-expand-lg shadow-sm">
+            <div class="container">
 
-<!-- =====================================================
-     🔷 NAVBAR MÓVIL (colapsa como corresponde)
-====================================================== -->
-<nav class="navbar navbar-light bg-light fixed-top navbar-expand-lg shadow-sm">
-    <div class="container">
+                <a class="navbar-brand fw-bold" href="<%: ResolveUrl("~/Default.aspx") %>">BlueSky</a>
 
-        <a class="navbar-brand fw-bold" href="<%: ResolveUrl("~/Default.aspx") %>">BlueSky</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar" aria-expanded="false" aria-label="Mostrar menú">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+                <div class="collapse navbar-collapse" id="mainNavbar">
+            
+                    <!-- ==== Menú izquierdo general ==== -->
+                    <ul class="navbar-nav me-auto">
 
-        <div class="collapse navbar-collapse" id="mainNavbar">
+                        <li class="nav-item">
+                            <a class="nav-link" href="<%: ResolveUrl("~/Default.aspx") %>">Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<%: ResolveUrl("~/Cursos.aspx") %>">Cursos</a>
+                        </li>
 
-            <!-- MENÚ PRINCIPAL (MISMO ORDEN Y ENLACES QUE DESKTOP) -->
-            <ul class="navbar-nav">
+                        <!-- =============================
+                             ADMIN dropdown (SOLO ROL 1)
+                        ============================== -->
+                        <asp:PlaceHolder ID="phAdminMenu" runat="server" Visible="false">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle fw-semibold text-primary"
+                                   href="#" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    Administración
+                                </a>
 
-                <!-- MENÚ DE CONTENIDO -->
-                <li class="nav-item"><a class="nav-link" href="<%: ResolveUrl("~/Default.aspx") %>">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link" href="<%: ResolveUrl("~/Cursos.aspx") %>">Cursos</a></li>
+                                <ul class="dropdown-menu">
 
-                <!-- ADMIN (solo se usa si está visible por rol) -->
-                <li id="liAdminToggle" runat="server" visible="false" class="nav-item">
-                    <a class="nav-link" href="<%: ResolveUrl("~/Admin/Reportes.aspx") %>">Administrar</a>
-                </li>
+                                    <li><a class="dropdown-item" href="<%: ResolveUrl("~/Admin/DatosAlumnos.aspx") %>">
+                                        <i class='bx bx-id-card'></i> Ver datos alumnos
+                                    </a></li>
 
-                <!-- LOGIN vs PERFIL -->
-                <asp:PlaceHolder ID="phLoggedOut" runat="server">
-                    <li class="nav-item"><a class="nav-link" href="<%: ResolveUrl("~/IniciarSesion.aspx") %>">Iniciar sesión</a></li>
-                </asp:PlaceHolder>
+                                    <li><a class="dropdown-item" href="<%: ResolveUrl("~/Admin/Reportes.aspx") %>">
+                                        <i class='bx bx-bar-chart-alt'></i> Reportes
+                                    </a></li>
 
-                <asp:PlaceHolder ID="phLoggedIn" runat="server" Visible="false">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><asp:Literal ID="litUserName" runat="server" /></a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <asp:LinkButton runat="server" CssClass="dropdown-item" ID="lnkLogout" OnClick="lnkLogout_Click">
-                                    Cerrar sesión
-                                </asp:LinkButton>
+                                    <li><a class="dropdown-item" href="<%: ResolveUrl("~/Admin/Soporte.aspx") %>">
+                                        <i class='bx bx-support'></i> Soporte
+                                    </a></li>
+
+                                    <li><a class="dropdown-item" href="<%: ResolveUrl("~/Admin/CrearCurso.aspx") %>">
+                                        <i class='bx bx-book-add'></i> Crear Curso
+                                    </a></li>
+
+                                    <li><a class="dropdown-item" href="<%: ResolveUrl("~/Admin/GenerarPreguntasIA.aspx") %>">
+                                        <i class='bx bx-brain'></i> Generar evaluaciones con IA
+                                    </a></li>
+
+                                    <li><a class="dropdown-item" href="<%: ResolveUrl("~/Admin/GestionEvaluaciones.aspx") %>">
+                                        <i class='bx bx-edit-alt'></i> Gestión manual de evaluaciones
+                                    </a></li>
+
+                                </ul>
                             </li>
-                        </ul>
-                    </li>
-                </asp:PlaceHolder>
+                        </asp:PlaceHolder>
 
-            </ul>
-        </div>
-    </div>
-</nav>
-
-<!-- ESPACIO PARA QUE CONTENIDO NO QUEDE TAPADO -->
-<div style="height:16px;"></div>
+                    </ul>
 
 
-<!-- =====================================================
-     📍 CONTENIDO REAL DE TUS PÁGINAS
-====================================================== -->
-<main class="container">
-    <asp:ContentPlaceHolder ID="MainContent" runat="server"/>
-</main>
+                    <!-- ==== LOGIN / USUARIO / LOGOUT ==== -->
+                    <ul class="navbar-nav ms-auto">
+
+                        <!-- NO logueado -->
+                        <asp:PlaceHolder ID="phLoggedOut" runat="server">
+                            <li class="nav-item">
+                                <a class="nav-link" href="<%: ResolveUrl("~/IniciarSesion.aspx") %>">
+                                    <i class='fa fa-user-circle-o'></i> Iniciar sesión
+                                </a>
+                            </li>
+                        </asp:PlaceHolder>
+
+                        <!-- LOGUEADO -->
+                        <asp:PlaceHolder ID="phLoggedIn" runat="server" Visible="false">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle fw-semibold"
+                                   href="#" data-bs-toggle="dropdown">
+                                   <i class='fa fa-user-circle-o'></i>
+                                   <asp:Literal ID="litUserName" runat="server"/>
+                                </a>
+
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <asp:LinkButton ID="lnkLogout" runat="server"
+                                                        CssClass="dropdown-item"
+                                                        OnClick="lnkLogout_Click"
+                                                        CausesValidation="false">
+                                            Cerrar sesión
+                                        </asp:LinkButton>
+                                    </li>
+                                </ul>
+                            </li>
+                        </asp:PlaceHolder>
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
 
-</form>
+        <!-- CONTENIDO DE LAS PÁGINAS -->
+        <main class="container mt-3">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+        </main>
 
-<!-- ================= JS ================-->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="<%: ResolveUrl("~/js/app.js") %>"></script>
+    </form>
+
+    <!-- JS Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

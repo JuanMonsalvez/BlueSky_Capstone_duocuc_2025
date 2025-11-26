@@ -6,29 +6,59 @@
     <meta charset="utf-8" />
     <title>BlueSky - Autenticación</title>
 
+    <!-- Viewport para que realmente sea responsive en móvil -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+    <!-- SweetAlert (lo dejo igual que tenías, para no romper nada) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert@2.1.2/dist/sweetalert.min.js"></script>
 
     <!-- Bootstrap 5 desde CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        crossorigin="anonymous" />
+          rel="stylesheet"
+          crossorigin="anonymous" />
 
-    <!-- Otros estilos del proyecto -->
+    <!-- Estilos globales del proyecto -->
     <link href="<%: ResolveUrl("~/css/font-awesome.min.css") %>" rel="stylesheet" />
     <link href="<%: ResolveUrl("~/css/templatemo-style.css") %>" rel="stylesheet" />
+    <link href="<%: ResolveUrl("~/css/app.css") %>" rel="stylesheet" />
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
 
     <style>
-        body {
+        /* ===== Reset y base para que no se desborde en móvil ===== */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
             background: #f7f7fb;
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
 
+        /* Dejo espacio para la navbar fija */
+        body {
+            padding-top: 70px;
+        }
+
+        /* Contenedor principal de las pantallas de auth */
         .auth-shell {
-            min-height: 100vh;
+            min-height: calc(100vh - 70px); /* alto total menos navbar */
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 40px 15px;
+            padding: 40px 16px;
+        }
+
+        /* En pantallas pequeñas, un poco menos de padding */
+        @media (max-width: 575.98px) {
+            .auth-shell {
+                padding: 24px 12px;
+            }
+        }
+
+        /* Opcional: fondo degradado suave tipo app */
+        .auth-shell-bg {
+            background: radial-gradient(circle at top, #eaf2ff 0, #f7f7fb 55%, #f7f7fb 100%);
         }
     </style>
 </head>
@@ -37,13 +67,24 @@
         <!-- ScriptManager para poder usar ScriptManager.RegisterStartupScript -->
         <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
 
-        <div class="auth-shell">
+        <!-- ================= NAVBAR SIMPLE DE AUTH ================= -->
+        <nav class="navbar navbar-light bg-light fixed-top shadow-sm">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="<%: ResolveUrl("~/Default.aspx") %>">
+                    <i class="fa fa-graduation-cap me-2" aria-hidden="true"></i>
+                    <span class="fw-semibold">BlueSky Financial</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- ============ CONTENEDOR CENTRAL PARA LOGIN / REGISTRO ============ -->
+        <div class="auth-shell auth-shell-bg">
             <asp:ContentPlaceHolder ID="MainContent" runat="server" />
         </div>
     </form>
 
     <!-- JS Bootstrap 5 (bundle incluye Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        crossorigin="anonymous"></script>
+            crossorigin="anonymous"></script>
 </body>
 </html>
