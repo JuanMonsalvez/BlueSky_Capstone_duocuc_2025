@@ -1,231 +1,382 @@
-﻿<%@ Page Title="Crear Curso" Language="C#" MasterPageFile="~/Site.Master"
-    AutoEventWireup="true" CodeBehind="CrearCurso.aspx.cs"
-    Inherits="bluesky.Admin.CrearCurso" %>
+﻿<%@ Page Title="Gestión de cursos" Language="C#" MasterPageFile="~/Site.Master"
+    AutoEventWireup="true" CodeBehind="CrearCurso.aspx.cs" Inherits="bluesky.Admin.CrearCurso" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
     <style>
-        .curso-wrapper {
-            max-width: 720px;
-            margin: 40px auto;
+        .admin-curso-wrapper {
+            padding: 30px 15px;
         }
 
-        .curso-card {
-            border: 0;
-            border-radius: 18px;
-            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
-            overflow: hidden;
-            background: #ffffff;
-        }
-
-        .curso-header {
-            background: radial-gradient(circle at top left, #38bdf8, #0d6efd);
-            color: #ffffff;
-            padding: 18px 22px;
-        }
-
-        .curso-title {
-            margin: 0;
-            font-size: 1.4rem;
-            font-weight: 700;
+        .admin-curso-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
+            margin-bottom: 18px;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
-            .curso-title i {
-                font-size: 1.8rem;
-            }
-
-        .curso-subtitle {
-            margin: 4px 0 0;
-            font-size: 0.9rem;
-            opacity: .9;
-        }
-
-        .curso-body {
-            padding: 22px 22px 10px;
-        }
-
-        .curso-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px 18px;
-        }
-
-        @media (min-width: 768px) {
-            .curso-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .curso-field-full {
-            grid-column: 1 / -1;
-        }
-
-        .curso-label {
+        .admin-curso-title {
+            font-size: 1.5rem;
             font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 4px;
+            color: #0f172a;
+            margin: 0;
         }
 
-        .curso-help {
-            font-size: 0.78rem;
+        .admin-curso-subtitle {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .card-curso {
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+        }
+
+        .card-curso-header {
+            padding: 14px 18px 10px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .card-curso-header h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
+            color: #111827;
+        }
+
+        .card-curso-body {
+            padding: 16px 18px 18px;
+        }
+
+        .btn-rounded {
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .badge-modalidad {
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+        }
+
+        .form-text-muted {
+            font-size: 0.8rem;
             color: #6b7280;
         }
 
-        .curso-footer {
-            padding: 14px 22px 18px;
-            border-top: 1px solid #e5e7eb;
-            background: #f9fafb;
+        /* --- Buscador --- */
+        .search-box {
+            display: flex;
+            gap: 6px;
+            align-items: center;
         }
 
-        .btn-crear-curso {
-            border-radius: 999px;
+        .search-box input {
+            max-width: 220px;
+        }
+
+        @media (max-width: 576px) {
+            .search-box {
+                width: 100%;
+            }
+
+            .search-box input {
+                flex: 1;
+                max-width: none;
+            }
+        }
+
+        /* --- Blur del fondo cuando el modal está abierto --- */
+        .blur-target {
+            transition: filter 0.2s ease, opacity 0.2s ease;
+        }
+
+        .modal-blur-open .blur-target {
+            filter: blur(4px);
+            opacity: 0.85;
+            pointer-events: none; /* Evita clics detrás del modal */
+        }
+
+        /* --- Modal custom (independiente de Bootstrap JS) --- */
+        .curso-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+        }
+
+        .curso-modal-overlay.show {
+            display: flex;
+        }
+
+        .curso-modal {
+            background: #ffffff;
+            border-radius: 16px;
+            max-width: 720px;
+            width: 95%;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
+            animation: modalFadeIn 0.2s ease-out;
+        }
+
+        .curso-modal-header,
+        .curso-modal-footer {
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+        }
+
+        .curso-modal-footer {
+            border-top: 1px solid rgba(148, 163, 184, 0.25);
+            border-bottom: none;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .curso-modal-body {
+            padding: 16px 18px 18px;
+        }
+
+        .curso-modal-title {
+            font-size: 1.1rem;
             font-weight: 600;
-            padding: 10px 22px;
-            font-size: 0.95rem;
+            margin: 0;
+            color: #111827;
         }
 
-        .curso-msg {
-            font-size: 0.9rem;
-            margin-top: 6px;
-            display: inline-block;
+        .curso-modal-close {
+            background: transparent;
+            border: none;
+            font-size: 1.3rem;
+            line-height: 1;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .curso-modal-close:hover {
+            color: #111827;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 
-    <!-- PANEL PRINCIPAL -->
-    <asp:UpdatePanel ID="upCrearCurso" runat="server" UpdateMode="Conditional">
-        <ContentTemplate>
+    <!-- TODO lo que se debe ver borroso cuando el modal esté abierto -->
+    <div class="admin-curso-wrapper container blur-target">
 
-            <div class="curso-wrapper">
-                <div class="card curso-card">
+        <asp:HiddenField ID="hdnCursoId" runat="server" />
 
-                    <!-- HEADER -->
-                    <div class="curso-header">
-                        <h2 class="curso-title">
-                            <i class='bx bxs-book-add'></i>
-                            Crear nuevo curso
-                        </h2>
-                        <p class="curso-subtitle">
-                            Completa la información para registrar un nuevo curso en el portal de capacitaciones.
-                        </p>
-                    </div>
+        <!-- HEADER -->
+        <div class="admin-curso-header">
+            <div>
+                <h1 class="admin-curso-title">
+                    <i class="fa fa-graduation-cap"></i> Gestión de cursos
+                </h1>
+                <p class="admin-curso-subtitle">
+                    Administra los cursos del portal: crea nuevos, edita y elimina los existentes.
+                </p>
+            </div>
 
-                    <!-- BODY -->
-                    <div class="curso-body">
-                        <div class="curso-grid">
+            <div class="d-flex align-items-center" style="gap:10px; flex-wrap: wrap;">
+                <!-- Buscador -->
+                <div class="search-box">
+                    <asp:TextBox ID="txtBuscar" runat="server" CssClass="form-control form-control-sm"
+                        placeholder="Buscar por nombre..."></asp:TextBox>
+                    <asp:Button ID="btnBuscar" runat="server"
+                        Text="Buscar"
+                        CssClass="btn btn-outline-secondary btn-sm"
+                        UseSubmitBehavior="false"
+                        OnClick="btnBuscar_Click" />
+                    <asp:Button ID="btnLimpiarBusqueda" runat="server"
+                        Text="Limpiar"
+                        CssClass="btn btn-light btn-sm"
+                        UseSubmitBehavior="false"
+                        OnClick="btnLimpiarBusqueda_Click" />
+                </div>
 
-                            <!-- Nombre (full width) -->
-                            <div class="curso-field-full">
-                                <asp:Label ID="lblNombre" runat="server"
-                                    Text="Nombre del curso"
-                                    CssClass="curso-label"
-                                    AssociatedControlID="txtNombreCurso"></asp:Label>
+                <!-- Botón nuevo curso -->
+                <asp:Button ID="btnNuevoCurso" runat="server"
+                    Text="Nuevo curso"
+                    CssClass="btn btn-primary btn-rounded btn-sm"
+                    UseSubmitBehavior="false"
+                    OnClick="btnNuevoCurso_Click" />
+            </div>
+        </div>
 
-                                <asp:TextBox ID="txtNombreCurso" runat="server"
-                                    CssClass="form-control"
-                                    MaxLength="150"
-                                    placeholder="Ej: Excel Intermedio" />
-                            </div>
-
-                            <!-- Fecha inicio -->
-                            <div>
-                                <asp:Label ID="lblFecha" runat="server"
-                                    Text="Fecha de inicio"
-                                    CssClass="curso-label"
-                                    AssociatedControlID="txtFechaInicio"></asp:Label>
-
-                                <asp:TextBox ID="txtFechaInicio" runat="server"
-                                    CssClass="form-control"
-                                    TextMode="Date" />
-                                <span class="curso-help">Opcional. Puedes dejarla en blanco si aún no está definida.</span>
-                            </div>
-
-                            <!-- Duración -->
-                            <div>
-                                <asp:Label ID="lblDuracion" runat="server"
-                                    Text="Duración (horas)"
-                                    CssClass="curso-label"
-                                    AssociatedControlID="txtDuracionHoras"></asp:Label>
-
-                                <asp:TextBox ID="txtDuracionHoras" runat="server"
-                                    CssClass="form-control"
-                                    TextMode="Number"
-                                    placeholder="Ej: 2" />
-                                <span class="curso-help">Número de horas estimadas de dedicación.</span>
-                            </div>
-
-                            <!-- Modalidad -->
-                            <div>
-                                <asp:Label ID="lblModalidad" runat="server"
-                                    Text="Modalidad"
-                                    CssClass="curso-label"></asp:Label>
-
-                                <asp:TextBox ID="txtModalidad" runat="server"
-                                    CssClass="form-control"
-                                    Text="Online"
-                                    ReadOnly="true"
-                                    Enabled="false" />
-                            </div>
-
-                            <!-- Imagen (full width) -->
-                            <div class="curso-field-full">
-                                <asp:Label ID="lblImagen" runat="server"
-                                    Text="Imagen del curso"
-                                    CssClass="curso-label"
-                                    AssociatedControlID="fuImagen"></asp:Label>
-
-                                <asp:FileUpload ID="fuImagen" runat="server"
-                                    CssClass="form-control" />
-
-                                <span class="curso-help d-block mt-1">Formatos permitidos: JPG, JPEG, PNG. Se mostrará como portada del curso.
+        <!-- LISTADO DE CURSOS -->
+        <div class="card-curso">
+            <div class="card-curso-header">
+                <h2>Cursos existentes</h2>
+                <small class="text-muted">
+                    Máximo 10 cursos por página. Usa el buscador para filtrar por nombre.
+                </small>
+            </div>
+            <div class="card-curso-body">
+                <asp:GridView ID="gvCursos" runat="server"
+                    CssClass="table table-striped table-hover table-sm"
+                    AutoGenerateColumns="False"
+                    DataKeyNames="curso_id"
+                    OnRowCommand="gvCursos_RowCommand"
+                    AllowPaging="true"
+                    PageSize="10"
+                    OnPageIndexChanging="gvCursos_PageIndexChanging">
+                    <Columns>
+                        <asp:BoundField DataField="curso_id" HeaderText="ID" ItemStyle-Width="40" />
+                        <asp:BoundField DataField="nombre" HeaderText="Nombre" />
+                        <asp:BoundField DataField="fecha_inicio" HeaderText="Inicio" DataFormatString="{0:yyyy-MM-dd}"
+                            HtmlEncode="false" />
+                        <asp:BoundField DataField="duracion_horas" HeaderText="Horas" />
+                        <asp:TemplateField HeaderText="Modalidad">
+                            <ItemTemplate>
+                                <span class="badge-modalidad bg-light text-dark">
+                                    <%# Eval("modalidad") %>
                                 </span>
-                            </div>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Acciones">
+                            <ItemTemplate>
+                                <asp:LinkButton ID="lnkEditar" runat="server"
+                                    CommandName="Editar"
+                                    CommandArgument='<%# Eval("curso_id") %>'
+                                    CssClass="btn btn-sm btn-outline-primary me-1">
+                                    <i class="fa fa-pencil"></i> Editar
+                                </asp:LinkButton>
+                                <asp:LinkButton ID="lnkEliminar" runat="server"
+                                    CommandName="Eliminar"
+                                    CommandArgument='<%# Eval("curso_id") %>'
+                                    CssClass="btn btn-sm btn-outline-danger"
+                                    OnClientClick="return confirm('¿Seguro que deseas eliminar este curso? Esta acción no se puede deshacer.');">
+                                    <i class="fa fa-trash"></i> Eliminar
+                                </asp:LinkButton>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+                    <PagerStyle CssClass="pagination-outer" HorizontalAlign="Center" />
+                </asp:GridView>
+            </div>
+        </div>
 
-                        </div>
-                    </div>
+    </div>
 
-                    <!-- FOOTER -->
-                    <div class="curso-footer d-flex justify-content-end align-items-center flex-wrap gap-2">
-                        <div class="ms-auto">
-                            <asp:Button ID="btnCrearCurso" runat="server"
-                                Text="Crear curso"
-                                CssClass="btn btn-primary btn-crear-curso"
-                                OnClick="btnCrearCurso_Click"
-                                OnClientClick="mostrarProcesando();" />
-                        </div>
-                    </div>
-
+    <!-- MODAL CUSTOM CREAR/EDITAR CURSO (no depende de Bootstrap JS) -->
+    <div id="modalCursoOverlay" class="curso-modal-overlay">
+        <div class="curso-modal">
+            <div class="curso-modal-header">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                    <h5 class="curso-modal-title">
+                        <span id="lblFormularioTitulo" runat="server">Crear nuevo curso</span>
+                    </h5>
+                    <button type="button" class="curso-modal-close" onclick="hideCursoModal()">&times;</button>
                 </div>
             </div>
 
-        </ContentTemplate>
+            <div class="curso-modal-body">
+                <div class="mb-3">
+                    <label for="txtNombreCurso" class="form-label">Nombre del curso</label>
+                    <asp:TextBox ID="txtNombreCurso" runat="server" CssClass="form-control"
+                        MaxLength="200" placeholder="Ej: Excel Básico para Finanzas"></asp:TextBox>
+                </div>
 
-        <Triggers>
-            <asp:PostBackTrigger ControlID="btnCrearCurso" />
-        </Triggers>
-    </asp:UpdatePanel>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="txtFechaInicio" class="form-label">Fecha de inicio (opcional)</label>
+                        <asp:TextBox ID="txtFechaInicio" runat="server" CssClass="form-control"
+                            TextMode="Date"></asp:TextBox>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="txtDuracionHoras" class="form-label">Duración en horas (opcional)</label>
+                        <asp:TextBox ID="txtDuracionHoras" runat="server" CssClass="form-control"
+                            TextMode="Number" Min="1" Max="500"></asp:TextBox>
+                    </div>
+                </div>
 
-    <!-- OVERLAY PROCESANDO CURSO (SE MUESTRA CON JS) -->
-    <div id="overlayProcesando" style="position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(3px); display: none; /* oculto por defecto */
-        align-items: center; justify-content: center; z-index: 2000;">
+                <div class="mb-3">
+                    <label for="ddlModalidad" class="form-label">Modalidad</label>
+                    <asp:DropDownList ID="ddlModalidad" runat="server" CssClass="form-control">
+                        <asp:ListItem Text="Online" Value="Online" Selected="True"></asp:ListItem>
+                        <asp:ListItem Text="Presencial" Value="Presencial"></asp:ListItem>
+                        <asp:ListItem Text="Mixto" Value="Mixto"></asp:ListItem>
+                    </asp:DropDownList>
+                </div>
 
-        <div style="text-align: center; color: #fff;">
-            <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div>
-            <p class="mt-3" style="font-size: 1.1rem; font-weight: 600;">Procesando curso…</p>
+                <div class="mb-3">
+                    <label for="fuImagen" class="form-label">Imagen del curso</label>
+                    <asp:FileUpload ID="fuImagen" runat="server" CssClass="form-control" />
+                    <div class="form-text form-text-muted">
+                        Formatos permitidos: JPG, JPEG, PNG. Tamaño recomendado: 1200x600 px.
+                    </div>
+                    <asp:Literal ID="litImagenActual" runat="server"></asp:Literal>
+                </div>
+            </div>
+
+            <div class="curso-modal-footer">
+                <asp:Button ID="btnLimpiarFormulario" runat="server"
+                    Text="Limpiar"
+                    CssClass="btn btn-light btn-sm"
+                    UseSubmitBehavior="false"
+                    OnClick="btnLimpiarFormulario_Click" />
+
+                <button type="button" class="btn btn-default btn-sm" onclick="hideCursoModal()">
+                    Cancelar
+                </button>
+
+                <asp:Button ID="btnCrearCurso" runat="server"
+                    Text="Crear curso"
+                    CssClass="btn btn-primary btn-rounded"
+                    OnClick="btnCrearCurso_Click"
+                    UseSubmitBehavior="false" />
+            </div>
         </div>
     </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
+    <!-- JS: mostrar/ocultar modal + blur -->
     <script type="text/javascript">
-        function mostrarProcesando() {
-            var overlay = document.getElementById('overlayProcesando');
+        function showCursoModal() {
+            var overlay = document.getElementById('modalCursoOverlay');
             if (overlay) {
-                overlay.style.display = 'flex';
+                overlay.className = 'curso-modal-overlay show';
+            }
+
+            if (document.body.classList) {
+                document.body.classList.add('modal-blur-open');
+            } else {
+                document.body.className += ' modal-blur-open';
+            }
+        }
+
+        function hideCursoModal() {
+            var overlay = document.getElementById('modalCursoOverlay');
+            if (overlay) {
+                overlay.className = 'curso-modal-overlay';
+            }
+
+            if (document.body.classList) {
+                document.body.classList.remove('modal-blur-open');
+            } else {
+                document.body.className = document.body.className.replace('modal-blur-open', '');
             }
         }
     </script>
+
 </asp:Content>

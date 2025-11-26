@@ -618,7 +618,7 @@
                     </a></li>
 
                     <li><a href="<%: ResolveUrl("~/Admin/CrearCurso.aspx") %>">
-                        <i class='bx bx-book-add'></i>Crear Curso
+                        <i class='bx bx-book-add'></i>Gestionar Curso
                     </a></li>
 
                     <li>
