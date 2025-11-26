@@ -1,12 +1,8 @@
 ﻿using RestSharp;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Web;
-using System.Web.Script.Serialization;
 using System.Web.UI;
-using System.Web.UI.WebControls;
+using Newtonsoft.Json.Linq; // Necesario para parsear JSON dinámico
 
 namespace bluesky.Admin
 {
@@ -17,7 +13,6 @@ namespace bluesky.Admin
             var username = Session["Username"] as string;
             if (string.IsNullOrEmpty(username))
             {
-                // No autenticado → lo mando a iniciar sesión
                 Response.Redirect("~/IniciarSesion.aspx");
                 return;
             }
@@ -39,7 +34,6 @@ namespace bluesky.Admin
                 master.UsarMenuBasico = true;
                 master.OcultarMenus = true;
             }
-
         }
 
         protected void btnGenerar_Click(object sender, EventArgs e)
@@ -60,14 +54,16 @@ namespace bluesky.Admin
 
         private string GenerarEvaluacionDesdePDF(string pdfPath)
         {
-            string apiKey = "AIzaSyDMQVsFgiYkqR-ocTErYNM1LcRTouvzZ9g";
-            string endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey;
+            // ⚠️ Guardar la API key en Web.config
+            string apiKey = System.Configuration.ConfigurationManager.AppSettings["GeminiApiKey"];
+            string endpoint = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={apiKey}";
 
             byte[] fileBytes = File.ReadAllBytes(pdfPath);
             string base64Pdf = Convert.ToBase64String(fileBytes);
 
             var client = new RestClient(endpoint);
-            var request = new RestRequest(endpoint, Method.Post);
+            var request = new RestRequest();
+            request.Method = Method.Post;
             request.AddHeader("Content-Type", "application/json");
 
             var body = new
@@ -82,7 +78,12 @@ namespace bluesky.Admin
                                     mime_type = "application/pdf",
                                     data = base64Pdf
                                 }
-                            },
+                            }
+                        }
+                    },
+                    new {
+                        parts = new object[]
+                        {
                             new {
                                 text = "Analiza este archivo PDF y genera una evaluación de 15 preguntas con 4 alternativas (A, B, C, D) sobre el contenido del curso. No incluyas las respuestas correctas y dame las respuesta al final."
                             }
@@ -91,8 +92,7 @@ namespace bluesky.Admin
                 }
             };
 
-            string jsonBody = new JavaScriptSerializer().Serialize(body);
-            request.AddParameter("application/json", jsonBody, ParameterType.RequestBody);
+            request.AddJsonBody(body);
 
             var response = client.Execute(request);
 
@@ -100,13 +100,13 @@ namespace bluesky.Admin
             {
                 try
                 {
-                    dynamic jsonResponse = new JavaScriptSerializer().DeserializeObject(response.Content);
-                    string text = jsonResponse["candidates"][0]["content"]["parts"][0]["text"];
-                    return text;
+                    var jsonResponse = JObject.Parse(response.Content);
+                    string text = (string)jsonResponse["candidates"]?[0]?["content"]?["parts"]?[0]?["text"];
+                    return !string.IsNullOrEmpty(text) ? text : "⚠️ No se encontró texto en la respuesta.";
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return "⚠️ Error al interpretar la respuesta del modelo. Verifica el formato JSON.";
+                    return $"⚠️ Error al interpretar la respuesta del modelo: {ex.Message}";
                 }
             }
             else
@@ -116,5 +116,3 @@ namespace bluesky.Admin
         }
     }
 }
-
-   

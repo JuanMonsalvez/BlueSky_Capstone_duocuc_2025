@@ -625,6 +625,19 @@
                         <i class='bx bx-book-add'></i>Crear Curso
                     </a></li>
 
+                    <li>
+                        <a href="<%: ResolveUrl("~/Admin/GenerarPreguntasIA.aspx") %>">
+                            <i class='bx bx-brain'></i>
+                            Generar evaluaciones con IA
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="<%: ResolveUrl("~/Admin/GestionEvaluaciones.aspx") %>">
+                            <i class='bx bx-edit-alt'></i>
+                            Gestión manual de evaluaciones
+                        </a>
+                    </li>
 
 
                 </ul>

@@ -69,15 +69,6 @@ namespace bluesky
         protected global::System.Web.UI.WebControls.Panel panelPaso2;
 
         /// <summary>
-        /// Control lblTimer.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTimer;
-
-        /// <summary>
         /// Control txtCodigo.
         /// </summary>
         /// <remarks>
