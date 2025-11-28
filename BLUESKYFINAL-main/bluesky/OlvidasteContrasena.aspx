@@ -1,5 +1,5 @@
 ﻿<%@ Page Title="Olvidaste tu contraseña" Language="C#" 
-    MasterPageFile="~/Site.Master"
+    MasterPageFile="~/Auth.Master"
     AutoEventWireup="true"
     CodeBehind="OlvidasteContrasena.aspx.cs"
     Inherits="bluesky.OlvidasteContrasena" %>

@@ -121,17 +121,24 @@ namespace bluesky.Admin
             using (var cmd = conn.CreateCommand())
             {
                 cmd.CommandText = @"
-                    SELECT curso_id, nombre, fecha_inicio, duracion_horas, modalidad, imagen_url
-                    FROM curso
-                    WHERE 1 = 1 ";
+            SELECT 
+    curso_id, 
+    nombre, 
+    DATE_FORMAT(fecha_inicio, '%d-%m-%Y') AS fecha_inicio,
+    duracion_horas, 
+    modalidad, 
+    imagen_url
+FROM curso
+WHERE 1 = 1";
 
                 if (!string.IsNullOrEmpty(filtro))
                 {
-                    cmd.CommandText += " AND nombre LIKE @Nombre ";
+                    cmd.CommandText += " AND nombre LIKE @Nombre";
                     cmd.Parameters.AddWithValue("@Nombre", "%" + filtro + "%");
                 }
 
-                cmd.CommandText += " ORDER BY fecha_inicio DESC, nombre ASC;";
+                // Orden correcto
+                cmd.CommandText += " ORDER BY curso_id DESC;";
 
                 conn.Open();
                 using (var reader = cmd.ExecuteReader())
@@ -262,7 +269,11 @@ namespace bluesky.Admin
             string nombreCurso = txtNombreCurso.Text.Trim();
             if (string.IsNullOrWhiteSpace(nombreCurso))
             {
-                MostrarAlerta("Error", "El nombre del curso es obligatorio.", "error");
+                ScriptManager.RegisterStartupScript(
+                    this, GetType(), "errNombreCurso",
+                    "Swal.fire('Error', 'El nombre del curso es obligatorio.', 'error');",
+                    true
+                );
                 MostrarModalCurso();
                 return;
             }
@@ -291,7 +302,11 @@ namespace bluesky.Admin
                 {
                     if (!fuImagen.HasFile)
                     {
-                        MostrarAlerta("Error", "Debes subir una imagen para el curso.", "error");
+                        ScriptManager.RegisterStartupScript(
+                            this, GetType(), "errImgRequerida",
+                            "Swal.fire('Error', 'Debes subir una imagen para el curso.', 'error');",
+                            true
+                        );
                         MostrarModalCurso();
                         return;
                     }
@@ -299,7 +314,11 @@ namespace bluesky.Admin
                     string ext = Path.GetExtension(fuImagen.FileName).ToLower();
                     if (ext != ".jpg" && ext != ".jpeg" && ext != ".png")
                     {
-                        MostrarAlerta("Error", "Formato de imagen inválido. Usa JPG, JPEG o PNG.", "error");
+                        ScriptManager.RegisterStartupScript(
+                            this, GetType(), "errFormatoImg",
+                            "Swal.fire('Error', 'Formato de imagen inválido. Usa JPG, JPEG o PNG.', 'error');",
+                            true
+                        );
                         MostrarModalCurso();
                         return;
                     }
@@ -346,7 +365,11 @@ namespace bluesky.Admin
                             catch { }
                         }
 
-                        MostrarAlerta("Actualizado", "El curso se actualizó correctamente.", "success");
+                        ScriptManager.RegisterStartupScript(
+                            this, GetType(), "okCursoActualizado",
+                            "Swal.fire('Actualizado', 'El curso se actualizó correctamente.', 'success');",
+                            true
+                        );
                     }
                     else
                     {
@@ -365,7 +388,11 @@ namespace bluesky.Admin
 
                         NotificarNuevoCursoATodos(nuevoCursoId, nombreCurso);
 
-                        MostrarAlerta("Éxito", "El curso se creó correctamente.", "success");
+                        ScriptManager.RegisterStartupScript(
+                            this, GetType(), "okCursoCreado",
+                            "Swal.fire('Éxito', 'El curso se creó correctamente.', 'success');",
+                            true
+                        );
                     }
                 }
 
@@ -382,7 +409,11 @@ namespace bluesky.Admin
                 }
                 catch { }
 
-                MostrarAlerta("Error", "Ocurrió un problema al guardar el curso. Intenta nuevamente.", "error");
+                ScriptManager.RegisterStartupScript(
+    this, GetType(), "errGuardarCurso",
+    "Swal.fire('Error', 'Ocurrió un problema al guardar el curso. Intenta nuevamente.', 'error');",
+    true
+);
                 MostrarModalCurso();
             }
         }
@@ -414,10 +445,11 @@ namespace bluesky.Admin
                         if (cantPreguntas > 0)
                         {
                             tx.Rollback();
-                            MostrarAlerta("No permitido",
-                                "No se puede eliminar el curso porque tiene evaluaciones asociadas. " +
-                                "Primero elimina o reasigna esas evaluaciones.",
-                                "warning");
+                            ScriptManager.RegisterStartupScript(
+                                this, GetType(), "warnNoEliminar",
+                                "Swal.fire('No permitido', 'No se puede eliminar el curso porque tiene evaluaciones asociadas. Primero elimina o reasigna esas evaluaciones.', 'warning');",
+                                true
+                            );
                             return;
                         }
 
@@ -448,14 +480,20 @@ namespace bluesky.Admin
                             catch { }
                         }
 
-                        MostrarAlerta("Eliminado", "El curso se eliminó correctamente.", "success");
+                        ScriptManager.RegisterStartupScript(
+                            this, GetType(), "okCursoEliminado",
+                            "Swal.fire('Eliminado', 'El curso se eliminó correctamente.', 'success');",
+                            true
+                        );
                     }
                     catch
                     {
                         tx.Rollback();
-                        MostrarAlerta("Error",
-                            "No se pudo eliminar el curso. Es posible que existan otros datos relacionados.",
-                            "error");
+                        ScriptManager.RegisterStartupScript(
+    this, GetType(), "errEliminarCurso",
+    "Swal.fire('Error', 'No se pudo eliminar el curso. Es posible que existan otros datos relacionados.', 'error');",
+    true
+);
                     }
                 }
             }

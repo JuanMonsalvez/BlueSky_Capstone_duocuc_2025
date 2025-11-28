@@ -47,12 +47,12 @@
             flex-wrap: wrap;
         }
 
-        .card-curso-header h2 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin: 0;
-            color: #111827;
-        }
+            .card-curso-header h2 {
+                font-size: 1rem;
+                font-weight: 600;
+                margin: 0;
+                color: #111827;
+            }
 
         .card-curso-body {
             padding: 16px 18px 18px;
@@ -81,19 +81,19 @@
             align-items: center;
         }
 
-        .search-box input {
-            max-width: 220px;
-        }
+            .search-box input {
+                max-width: 220px;
+            }
 
         @media (max-width: 576px) {
             .search-box {
                 width: 100%;
             }
 
-            .search-box input {
-                flex: 1;
-                max-width: none;
-            }
+                .search-box input {
+                    flex: 1;
+                    max-width: none;
+                }
         }
 
         /* --- Blur del fondo cuando el modal está abierto --- */
@@ -118,9 +118,9 @@
             z-index: 1050;
         }
 
-        .curso-modal-overlay.show {
-            display: flex;
-        }
+            .curso-modal-overlay.show {
+                display: flex;
+            }
 
         .curso-modal {
             background: #ffffff;
@@ -165,9 +165,9 @@
             color: #6b7280;
         }
 
-        .curso-modal-close:hover {
-            color: #111827;
-        }
+            .curso-modal-close:hover {
+                color: #111827;
+            }
 
         @keyframes modalFadeIn {
             from {
@@ -191,14 +191,15 @@
         <div class="admin-curso-header">
             <div>
                 <h1 class="admin-curso-title">
-                    <i class="fa fa-graduation-cap"></i> Gestión de cursos
+                    <i class="fa fa-graduation-cap"></i>Gestión de cursos
                 </h1>
                 <p class="admin-curso-subtitle">
                     Administra los cursos del portal: crea nuevos, edita y elimina los existentes.
+               
                 </p>
             </div>
 
-            <div class="d-flex align-items-center" style="gap:10px; flex-wrap: wrap;">
+            <div class="d-flex align-items-center" style="gap: 10px; flex-wrap: wrap;">
                 <!-- Buscador -->
                 <div class="search-box">
                     <asp:TextBox ID="txtBuscar" runat="server" CssClass="form-control form-control-sm"
@@ -228,8 +229,7 @@
         <div class="card-curso">
             <div class="card-curso-header">
                 <h2>Cursos existentes</h2>
-                <small class="text-muted">
-                    Máximo 10 cursos por página. Usa el buscador para filtrar por nombre.
+                <small class="text-muted">Máximo 10 cursos por página. Usa el buscador para filtrar por nombre.
                 </small>
             </div>
             <div class="card-curso-body">
@@ -266,8 +266,8 @@
                                     CommandName="Eliminar"
                                     CommandArgument='<%# Eval("curso_id") %>'
                                     CssClass="btn btn-sm btn-outline-danger"
-                                    OnClientClick="return confirm('¿Seguro que deseas eliminar este curso? Esta acción no se puede deshacer.');">
-                                    <i class="fa fa-trash"></i> Eliminar
+                                    OnClientClick="return confirmarEliminar(this);">
+    <i class="fa fa-trash"></i> Eliminar
                                 </asp:LinkButton>
                             </ItemTemplate>
                         </asp:TemplateField>
@@ -283,7 +283,7 @@
     <div id="modalCursoOverlay" class="curso-modal-overlay">
         <div class="curso-modal">
             <div class="curso-modal-header">
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
                     <h5 class="curso-modal-title">
                         <span id="lblFormularioTitulo" runat="server">Crear nuevo curso</span>
                     </h5>
@@ -325,6 +325,7 @@
                     <asp:FileUpload ID="fuImagen" runat="server" CssClass="form-control" />
                     <div class="form-text form-text-muted">
                         Formatos permitidos: JPG, JPEG, PNG. Tamaño recomendado: 1200x600 px.
+                   
                     </div>
                     <asp:Literal ID="litImagenActual" runat="server"></asp:Literal>
                 </div>
@@ -339,6 +340,7 @@
 
                 <button type="button" class="btn btn-default btn-sm" onclick="hideCursoModal()">
                     Cancelar
+               
                 </button>
 
                 <asp:Button ID="btnCrearCurso" runat="server"
@@ -378,5 +380,38 @@
             }
         }
     </script>
+
+    <script type="text/javascript">
+        function confirmarEliminar(btn) {
+            // Evitar que se dispare el postback inmediato
+            if (event && event.preventDefault) {
+                event.preventDefault();
+            }
+
+            Swal.fire({
+                title: '¿Seguro que deseas eliminar este curso?',
+                text: 'Esta acción no se puede deshacer.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    // Quitamos el onclick para evitar un bucle al hacer click de nuevo
+                    btn.removeAttribute('onclick');
+                    // Disparamos el click normal del LinkButton (hará el __doPostBack)
+                    btn.click();
+                }
+            });
+
+            // Siempre devolvemos false para que NO haga postback hasta que el usuario confirme
+            return false;
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 
 </asp:Content>

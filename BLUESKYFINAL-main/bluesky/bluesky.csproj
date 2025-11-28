@@ -371,6 +371,7 @@
     <Content Include="images\tst-image4.jpg" />
     <Content Include="images\WORD-BASICO.png" />
     <Content Include="images\WORD-PORTADA.jpeg" />
+    <Content Include="MisDatos.aspx" />
     <Content Include="prueba\certificado.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -725,6 +726,13 @@
     </Compile>
     <Compile Include="Evaluaciones\EvaluacionWordBasico.aspx.designer.cs">
       <DependentUpon>EvaluacionWordBasico.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MisDatos.aspx.cs">
+      <DependentUpon>MisDatos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MisDatos.aspx.designer.cs">
+      <DependentUpon>MisDatos.aspx</DependentUpon>
     </Compile>
     <Compile Include="models\DatosAlumnos.cs" />
     <Compile Include="models\Evaluacion.cs" />

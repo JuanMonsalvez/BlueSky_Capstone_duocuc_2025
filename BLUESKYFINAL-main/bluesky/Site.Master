@@ -423,6 +423,7 @@
                         </asp:PlaceHolder>
 
                         <!-- Logueado: icono + nombre abre menú -->
+                        <!-- Logueado: icono + nombre abre menú -->
                         <asp:PlaceHolder ID="phLoggedIn" runat="server" Visible="false">
                             <li class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" id="userDropdown"
@@ -431,9 +432,16 @@
                                     <asp:Literal ID="litUserName" runat="server" />
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <!-- NUEVO BOTÓN MIS DATOS -->
+                                    <li>
+                                        <a class="dropdown-item" href="<%: ResolveUrl("~/MisDatos.aspx") %>">Mis datos
+                                        </a>
+                                    </li>
+
+                                    <!-- BOTÓN EXISTENTE CERRAR SESIÓN -->
                                     <li>
                                         <asp:LinkButton ID="lnkLogout" runat="server" OnClick="lnkLogout_Click" CssClass="dropdown-item" CausesValidation="false">
-                                            Cerrar sesión
+                    Cerrar sesión
                                         </asp:LinkButton>
                                     </li>
                                 </ul>

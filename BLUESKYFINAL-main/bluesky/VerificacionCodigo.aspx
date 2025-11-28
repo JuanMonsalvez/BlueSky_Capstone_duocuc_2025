@@ -1,5 +1,5 @@
 ﻿<%@ Page Title="Verificación de código" Language="C#" 
-    MasterPageFile="~/Site.Master"
+    MasterPageFile="~/Auth.Master"
     AutoEventWireup="true" 
     CodeBehind="VerificacionCodigo.aspx.cs" 
     Inherits="bluesky.VerificacionCodigo" %>
